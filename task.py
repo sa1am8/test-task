@@ -2,8 +2,8 @@ from api import *
 
 # commands start with -
 
-if __name__ == '__main__':
-    print('---running---', end='\n')
+
+def main():
     user_id = change_user()
     while True:
         input_value = str(input(':/'))
@@ -20,7 +20,7 @@ if __name__ == '__main__':
         elif input_value == '-change_user' or input_value == '-change user':
             change_user()
 
-        elif input_value == 'exit()':
+        elif input_value == 'exit()' or input_value == '-exit':
             exit()
 
         else:

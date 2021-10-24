@@ -20,15 +20,14 @@ def exception_catcher(func):
 
 
 def create_user(user_name):
-    user_name = user_name.split(' ')[1:]
-    user_name = ' '.join(user_name)
     try:
-        user = User(name=' '.join(user_name))
+        user = User(name=user_name)
     except Exception as e:
         print(e)
         return False
     session.add(user)
     session.commit()
+    return True
 
 
 @exception_catcher
@@ -42,17 +41,17 @@ def chose_user(user_name, users_list):
 @exception_catcher
 def change_user():
     users_list = [i.name for i in session.query(User).all()]
-    print('chose one of them or create new:', ', '.join([i for i in users_list]),
+    print('chose one of them or create new:', ', '.join(users_list),
           end='\n')  # username must not be digit
 
     user_name = str(input(':/'))
     if '-create' in user_name:
+        user_name = ' '.join(user_name.split(' ')[1:])
         _ = create_user(user_name)
         while not _:
             print('this name is already used, try another one')
             user_name = str(input(':/'))
             _ = create_user(user_name)
-
     user_id = chose_user(user_name, users_list)
     if not user_id:
         print('wrong name', end='\n')
@@ -100,11 +99,13 @@ def show_statistic(input_value, user_id):  # -statistic 21.10.2021 food
                                                       Record.object_name == object_name)
     else:
         result = session.query(Record).filter_by(user_id=user_id)
-    for i in result.all():
+
+    result = result.all()
+    for i in result:
         print(i, end='\n')
-    if not result.all():
+    if not result:
         print('no data')
-    return result.all()
+    return result
 
 
 @exception_catcher
@@ -112,18 +113,17 @@ def get_today_stats(user_id):
     date = str(datetime.date.today())
     timestamp = int(time.mktime(datetime.datetime.strptime(date, "%Y-%m-%d").timetuple()))
     result = session.query(Record).filter_by(date=timestamp, user_id=user_id)
-
-    for i in result.all():
+    result = result.all()
+    for i in result:
         print(i, end='\n')
-    if not result.all():
+    if not result:
         print('no data')
-    return result.all()
+    return result
 
 
 @exception_catcher
 def delete_records(input_value, user_id):
     values = input_value.split(' ')[1:]
-    print(values)
     if len(values) > 0:
 
         timestamp = None
@@ -134,7 +134,6 @@ def delete_records(input_value, user_id):
                 timestamp = int(time.mktime(datetime.datetime.strptime(i, "%d.%m.%Y").timetuple()))
             else:
                 object_name = i
-        print(timestamp, object_name)
         if timestamp is None:
             session.query(Record).filter(Record.object_name == object_name, Record.user_id == user_id).delete()
         elif object_name is None:
@@ -142,11 +141,10 @@ def delete_records(input_value, user_id):
         else:
             session.query(Record).filter(Record.object_name == object_name, Record.date == timestamp,
                                          Record.user_id == user_id).delete()
-
-        print(f'deleted records about {values}')
+        print(f'deleted records about {values} if they were')
     else:
         session.query(Record).filter(Record.user_id == user_id).delete()
-        print('successfully deleted')
+        print('all successfully deleted')
     session.commit()
 
 
