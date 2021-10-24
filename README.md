@@ -33,7 +33,8 @@ by mentioned date or month(year). Removes all records of this user.
   
 Example of usage:
 ```bash
-python run.py
+C:\Users\Toshka\PycharmProjects\test-task>python run.py
+
 chose one of them or create new: Anton, Toshka, Ilya, test, Petya Ivanov
 :/Anton
 Welcome back, Anton
@@ -83,4 +84,9 @@ Welcome back, Ilya
 :/-statistic
 2021-10-24 | food - 100, with description - ''
 2021-10-22 | food - 5, with description - ''
+:/-change_user
+chose one of them or create new: Anton, Toshka, Ilya, test, Petya Ivanov
+:/-create Julia
+Welcome back, Julia
+:/exit()
 ```
